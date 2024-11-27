@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "icquests_canister_backend": {
+      "main": "src/icquests_canister_backend/main.mo",
+      "type": "motoko"
+    },
+    "icquests_canister_frontend": {
+      "dependencies": [
+        "icquests_canister_backend"
+      ],
+      "source": [
+        "src/icquests_canister_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "icquests_canister_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
