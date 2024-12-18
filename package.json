@@ -5,6 +5,7 @@
   },
   "name": "icquests_canister",
   "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
     "build": "",
     "prebuild": "npm run prebuild --workspaces --if-present",
     "pretest": "npm run prebuild --workspaces --if-present",
