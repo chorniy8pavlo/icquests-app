@@ -5,14 +5,14 @@
       "type": "motoko"
     },
     "icquests_canister_frontend": {
-      "dependencies": [
-        "icquests_canister_backend"
-      ],
+      "dependencies": [],
+      "frontend": {
+        "entrypoint": "src/icquests_canister_frontend/out/index.html"
+      },
       "source": [
-        "src/icquests_canister_frontend/dist"
+        "src/icquests_canister_frontend/out"
       ],
-      "type": "assets",
-      "workspace": "icquests_canister_frontend"
+      "type": "assets"
     }
   },
   "defaults": {
