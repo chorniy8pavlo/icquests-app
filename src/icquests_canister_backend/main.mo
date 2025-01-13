@@ -150,6 +150,23 @@ actor {
    * ==========================================
    */
   public func getUser(principal : Text) : async ?UserData {
+    let existingUser = users.get(principal);
+    switch (existingUser) {
+      case (?user) {
+        return ?user;
+      };
+      case null {
+        let newUser = {
+          principal = principal;
+          xpBalance = 0;
+          completedQuests = [];
+        };
+
+        users.put(principal, newUser);
+
+        return ?newUser;
+      };
+    };
     return users.get(principal);
   };
 

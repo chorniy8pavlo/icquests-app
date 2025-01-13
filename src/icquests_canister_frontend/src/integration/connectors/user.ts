@@ -24,6 +24,7 @@ export class UserConnector {
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = (await actor.getAllUsers()) as IUser[];
+    console.log({result})
     return result.sort((a, b) => Number(b.xpBalance) - Number(a.xpBalance));
   }
 }
