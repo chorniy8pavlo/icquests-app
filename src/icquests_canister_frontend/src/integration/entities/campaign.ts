@@ -6,7 +6,8 @@ export class Campaign implements ICampaign {
     private title: string,
     private description: string,
     private background: string,
-    private logo: string
+    private logo: string,
+    private partnerUrl: string
   ) {}
 
   getUI() {
@@ -21,6 +22,7 @@ export class Campaign implements ICampaign {
       completedQuestsByUser: 0,
       totalXP: 15,
       earnedXPByUser: 0,
+      partnerUrl: this.partnerUrl
     };
   }
 }

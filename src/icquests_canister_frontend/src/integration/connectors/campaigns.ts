@@ -16,7 +16,7 @@ export class CampaignConnector {
     console.log({ result });
 
     return result?.map(
-      (c) => new Campaign(c.id, c.title, c.description, c.image, c.logo)
+      (c) => new Campaign(c.id, c.title, c.description, c.image, c.logo, c.partnerUrl)
     );
   }
 }

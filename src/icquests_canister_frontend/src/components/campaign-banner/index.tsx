@@ -31,8 +31,8 @@ export default function CampaignBanner({
         className="rounded-xl"
         src={logo}
         alt="Logo"
-        width={100}
-        height={100}
+        width={64}
+        height={64}
       />
       <p className="font-semibold text-[28px] leading-8 mt-6 text-white">
         {title}

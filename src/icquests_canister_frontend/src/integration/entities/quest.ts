@@ -12,7 +12,12 @@ export class Quest implements IQuest {
     private description: string,
     private status: QuestStatus,
     private reward: number,
-    private campaign?: Campaign
+    private difficulty: number,
+    private prerequisites: string,
+    private tags: string[],
+    private estimatedTime: string,
+    private participantsCount: number,
+    private campaign?: Campaign,
   ) {}
 
   getUI(): IQuestUI {
@@ -24,6 +29,11 @@ export class Quest implements IQuest {
       status: this.status,
       reward: this.reward,
       campaign: this.campaign,
+      difficulty: this.difficulty,
+      prerequisites: this.prerequisites,
+      tags: this.tags,
+      estimatedTime: this.estimatedTime,
+      participantsCount: this.participantsCount,
     };
   }
 

@@ -68,15 +68,17 @@ module {
      * ==========================================
      */
     public func verify(caller : Principal) : async Bool {
-        let externalCanister = actor ("4bgdx-hqaaa-aaaar-qaeqq-cai") : NFIDVaultsActor;
+        let externalCanister = actor ("4bgdx-hqaaa-aaaar-qaeqq-cai") : NFIDVaultsActor; // nfid.one -> cycleops.com
         let userPrincipal = Principal.toText(caller);
 
         try {
-            let canisters = await externalCanister.get_all_canisters();
+            let canisters = await externalCanister.get_all_canisters(); // nfid.one/.get_all_canisters
             for (vault in canisters.vals()) {
+                // example we received array of vaults ids.
                 let initiatorText = Principal.toText(vault.initiator);
 
                 if (initiatorText == userPrincipal) {
+                    // we map and check if user id is in array
                     return true;
                 };
             };

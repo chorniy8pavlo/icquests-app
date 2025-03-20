@@ -23,6 +23,10 @@ actor {
     description : Text;
     rewardXp : Nat;
     campaignId : Nat;
+    tags : [Text];
+    estimatedTime : Text;
+    difficulty : Nat;
+    prerequisites : Text;
   };
 
   type Campaign = {
@@ -33,6 +37,7 @@ actor {
     createdDate : Nat;
     logo : Text;
     isActive : Bool;
+    partnerUrl : Text;
   };
 
   type UserData = {
@@ -132,8 +137,30 @@ actor {
     if (quests.get(quest.id) != null) {
       return "Quest with this ID already exists.";
     };
-    quests.put(quest.id, quest);
+
+    let newQuest = {
+      id = quest.id;
+      title = quest.title;
+      subtitle = quest.subtitle;
+      description = quest.description;
+      rewardXp = quest.rewardXp;
+      campaignId = quest.campaignId;
+      tags = quest.tags;
+      estimatedTime = quest.estimatedTime;
+      difficulty = quest.difficulty;
+      prerequisites = quest.prerequisites;
+    };
+
+    quests.put(quest.id, newQuest);
     return "Quest added successfully.";
+  };
+
+  public func updateQuest(quest : Quest) : async Text {
+    if (quests.get(quest.id) == null) {
+      return "Quest not found.";
+    };
+    quests.put(quest.id, quest);
+    return "Quest updated successfully.";
   };
 
   public func deleteQuest(id : Nat) : async Text {
@@ -218,6 +245,29 @@ actor {
                   completedQuests = Array.append<Nat>(user.completedQuests, [questId]);
                 };
                 users.put(user.principal, updatedUser);
+
+                // Increment the participants count for the completed quest
+                switch (quests.get(questId)) {
+                  case (?quest) {
+                    let updatedQuest = {
+                      id = quest.id;
+                      title = quest.title;
+                      subtitle = quest.subtitle;
+                      description = quest.description;
+                      rewardXp = quest.rewardXp;
+                      campaignId = quest.campaignId;
+                      tags = quest.tags;
+                      estimatedTime = quest.estimatedTime;
+                      difficulty = quest.difficulty;
+                      prerequisites = quest.prerequisites;
+                    };
+                    quests.put(questId, updatedQuest);
+                  };
+                  case null {
+                    // Quest not found, no action needed
+                  };
+                };
+
                 return "QUEST_COMPLETED";
               };
               case false {

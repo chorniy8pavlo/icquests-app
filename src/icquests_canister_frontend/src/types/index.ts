@@ -12,8 +12,12 @@ export interface IQuestUI {
   status: QuestStatus;
   reward: number;
   campaign?: Campaign;
+  participantsCount : number;
+  tags : string[]
+  estimatedTime: string;
+  difficulty : number;
+  prerequisites : string;
 }
-
 export interface ICampaignUI {
   id: string;
   background: string;
@@ -25,6 +29,7 @@ export interface ICampaignUI {
   completedQuestsByUser: number;
   totalXP: number;
   earnedXPByUser: number;
+  partnerUrl: string
 }
 
 export interface IUser {

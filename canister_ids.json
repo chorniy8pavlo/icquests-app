@@ -2,6 +2,9 @@
   "icquests_canister_backend": {
     "ic": "lyo6x-saaaa-aaaao-qjwlq-cai"
   },
+  "icquests_canister_backend_dev": {
+    "ic": "4wsql-ziaaa-aaaao-qj6gq-cai"
+  },
   "icquests_canister_frontend": {
     "ic": "kjeai-kiaaa-aaaao-qjwoa-cai"
   }

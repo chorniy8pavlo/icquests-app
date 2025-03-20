@@ -14,12 +14,13 @@ export class QuestsConnector {
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = (await actor.getAllQuests()) as any[];
-
+console.log({result})
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const campaigns = await campaignConnector.getCampaigns();
 
     return result?.map((c) => {
       const questCampaign = campaigns.find((camp) => camp.id === c.campaignId);
+
       return new Quest(
         c.id,
         c.title,
@@ -27,7 +28,12 @@ export class QuestsConnector {
         c.description,
         c.status,
         c.rewardXp,
-        questCampaign
+        c.difficulty,
+        c.prerequisites,
+        c.tags,
+        c.estimatedTime,
+        c.participantsCount,
+        questCampaign,
       );
     });
   }

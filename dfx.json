@@ -4,6 +4,10 @@
       "main": "src/icquests_canister_backend/main.mo",
       "type": "motoko"
     },
+     "icquests_canister_backend_dev": {
+      "main": "src/icquests_canister_backend/main.mo",
+      "type": "motoko"
+    },
     "icquests_canister_frontend": {
       "dependencies": [],
       "frontend": {
