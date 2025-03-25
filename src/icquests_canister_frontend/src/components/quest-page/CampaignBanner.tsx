@@ -1,10 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import BannerImage from '@/assets/images/bg-banner.jpg';
 import { Users, ExternalLink } from 'lucide-react';
 
 type CampaignBannerProps = {
   campaign: {
+    background: string;
     id: string;
     title: string;
     logo: string;
@@ -19,7 +19,7 @@ export const CampaignBanner = ({ campaign }: CampaignBannerProps) => {
     <div
       className="p-6 rounded-xl bg-cover bg-center mb-6 relative overflow-hidden group"
       style={{
-        backgroundImage: `linear-gradient(rgba(13,17,23,0.8), rgba(13,17,23,0.95)), url(${BannerImage.src})`,
+        backgroundImage: `linear-gradient(rgba(13,17,23,0.8), rgba(13,17,23,0.95)), url(${campaign.background})`,
       }}
     >
       {/* Subtle hover effect */}

@@ -6,6 +6,7 @@ import useSWR, { mutate } from 'swr';
 import { useState } from 'react';
 import { useAuth, useIdentity } from '@nfid/identitykit/react';
 import { userConnector } from '@/integration/connectors/user';
+import { toast, Toaster } from 'sonner';
 import {
   Breadcrumbs,
   QuestHeader,
@@ -63,17 +64,27 @@ export default function QuestDetailsClient({ id }: { id: string }) {
   const isCompleted = userData?.completedQuests.includes(BigInt(Number(id)));
 
   const verifyCompletion = async () => {
-    if (!user?.principal || !identity)
-      return alert('Please connect your wallet first');
-
-    setIsLoading(true);
-    const res = await quest.verifyCompletion(identity);
-
-    if (res) {
-      revalidateCache(user?.principal.toString());
+    if (!user?.principal || !identity) {
+      toast.error('Please connect your wallet first');
+      return;
     }
 
-    setIsLoading(false);
+    setIsLoading(true);
+    try {
+      const res = await quest.verifyCompletion(identity);
+
+      if (res) {
+        toast.success('Quest completion verified successfully!');
+        revalidateCache(user?.principal.toString());
+      } else {
+        toast.error('Quest requirements have not been met. Please complete all tasks and try again.');
+      }
+    } catch (error) {
+      toast.error('An error occurred during verification');
+      console.error('Verification error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const breadcrumbPaths = [
@@ -85,6 +96,7 @@ export default function QuestDetailsClient({ id }: { id: string }) {
 
   return (
     <div className="min-h-screen py-8 bg-dark">
+      <Toaster position="top-right" richColors />
       <div className="px-3 max-w-[1392px] mx-auto">
         <Breadcrumbs paths={breadcrumbPaths} backUrl="/all-quests" />
 

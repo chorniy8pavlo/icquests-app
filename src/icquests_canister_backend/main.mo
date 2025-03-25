@@ -247,10 +247,10 @@ actor {
                 await QuestNFIDVaults.verify(userPrincipal);
               };
               case (2) {
-                await QuestPacapump.verify(userPrincipal);
+                await QuestKongswap.verify(userPrincipal);
               };
               case (3) {
-                await QuestKongswap.verify(userPrincipal);
+                await QuestPacapump.verify(userPrincipal);
               };
               case (4) {
                 await QuestSonic.verify(userPrincipal);
