@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { QuestSkeleton } from './QuestSkeleton';
+import Web3Loader from '../web3-loader';
 
 export const QuestLoading = () => {
-  return <QuestSkeleton />;
+  return <Web3Loader message="Loading quest details..." minDisplayTime={2500} />;
 };
 
 export const QuestError = () => {

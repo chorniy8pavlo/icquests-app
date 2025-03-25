@@ -8,7 +8,13 @@ import Array "mo:base/Array";
 import Bool "mo:base/Bool";
 import Utils "utils";
 
-import Quest001 "./quest001";
+import QuestNFIDVaults "./quest-nfidvaults";
+import QuestPacapump "./quest-pacapump";
+import QuestKongswap "./quest-kongswap";
+import QuestSonic "./quest-sonic";
+// You may need to import Quest001 and Quest002 if needed
+// import Quest001 "./quest001";
+// import Quest002 "./quest002";
 
 actor {
   /**
@@ -34,10 +40,10 @@ actor {
     title : Text;
     image : Text;
     description : Text;
-    createdDate : Nat;
     logo : Text;
     isActive : Bool;
     partnerUrl : Text;
+    category : Text;
   };
 
   type UserData = {
@@ -235,7 +241,32 @@ actor {
             return "QUEST_ALREADY_COMPLETED";
           };
           case null {
-            let isVerified = await Quest001.verify(userPrincipal);
+            // Select verification method based on quest ID
+            let isVerified = switch (questId) {
+              case (1) {
+                await QuestNFIDVaults.verify(userPrincipal);
+              };
+              case (2) {
+                await QuestPacapump.verify(userPrincipal);
+              };
+              case (3) {
+                await QuestKongswap.verify(userPrincipal);
+              };
+              case (4) {
+                await QuestSonic.verify(userPrincipal);
+              };
+              case (5) {
+                // If using Quest001 and Quest002 modules
+                // await Quest001.verify(userPrincipal)
+
+                // For now, let's default to false for the 5th quest until implemented
+                false;
+              };
+              case (_) {
+                // For any other quest IDs, verification fails
+                false;
+              };
+            };
 
             switch (isVerified) {
               case true {

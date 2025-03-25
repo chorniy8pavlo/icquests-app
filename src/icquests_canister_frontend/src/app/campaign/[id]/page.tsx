@@ -4,7 +4,7 @@ import CampaignPage from '@/components/campaign-page';
 import React from 'react';
 
 export async function generateStaticParams() {
-  return [{ id: '1' }, { id: '2' }];
+  return [{ id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }];
 }
 
 export default async function Campaigns({

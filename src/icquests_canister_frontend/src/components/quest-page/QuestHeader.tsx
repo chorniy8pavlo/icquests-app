@@ -1,4 +1,4 @@
-import { Calendar, Clock, Tag } from 'lucide-react';
+import { Clock, Tag } from 'lucide-react';
 
 type QuestHeaderProps = {
   title: string;
@@ -12,7 +12,6 @@ type QuestHeaderProps = {
 export const QuestHeader = ({
   title,
   subtitle,
-  dateCreated,
   estimatedTime,
   categories = [],
 }: QuestHeaderProps) => {
@@ -40,13 +39,6 @@ export const QuestHeader = ({
       </p>
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-white/40">
-        {dateCreated && (
-          <div className="flex items-center gap-1.5">
-            <Calendar size={12} />
-            <span>Created: {dateCreated}</span>
-          </div>
-        )}
-
         {estimatedTime && (
           <div className="flex items-center gap-1.5">
             <Clock size={12} />

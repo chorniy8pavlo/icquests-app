@@ -12,11 +12,11 @@ export interface IQuestUI {
   status: QuestStatus;
   reward: number;
   campaign?: Campaign;
-  participantsCount : number;
-  tags : string[]
+  participantsCount: number;
+  tags: string[];
   estimatedTime: string;
-  difficulty : number;
-  prerequisites : string;
+  difficulty: number;
+  prerequisites: string;
 }
 export interface ICampaignUI {
   id: string;
@@ -24,12 +24,12 @@ export interface ICampaignUI {
   logo: string;
   title: string;
   subtitle: string;
-  createdDate: string;
   totalQuests: number;
   completedQuestsByUser: number;
   totalXP: number;
   earnedXPByUser: number;
-  partnerUrl: string
+  partnerUrl: string;
+  category: string;
 }
 
 export interface IUser {

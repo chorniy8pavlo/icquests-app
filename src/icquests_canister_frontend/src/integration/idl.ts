@@ -5,9 +5,9 @@ export const idlFactory = ({ IDL }) => {
     'id' : IDL.Nat,
     'title' : IDL.Text,
     'logo' : IDL.Text,
-    'createdDate' : IDL.Nat,
     'description' : IDL.Text,
     'isActive' : IDL.Bool,
+    'category' : IDL.Text,
     'image' : IDL.Text,
     'partnerUrl' : IDL.Text,
   });
@@ -19,7 +19,6 @@ export const idlFactory = ({ IDL }) => {
     'tags' : IDL.Vec(IDL.Text),
     'campaignId' : IDL.Nat,
     'description' : IDL.Text,
-    'participantsCount' : IDL.Nat,
     'rewardXp' : IDL.Nat,
     'estimatedTime' : IDL.Text,
     'subtitle' : IDL.Text,

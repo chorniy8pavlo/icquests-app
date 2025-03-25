@@ -16,7 +16,20 @@ export class CampaignConnector {
     console.log({ result });
 
     return result?.map(
-      (c) => new Campaign(c.id, c.title, c.description, c.image, c.logo, c.partnerUrl)
+      (c) => new Campaign(
+        c.id, 
+        c.title, 
+        c.description, 
+        c.image, 
+        c.logo, 
+        c.partnerUrl,
+        c.category || 'General', // Default category if not provided
+        c.createdDate || 'today',
+        c.totalQuests || 1,
+        c.completedQuestsByUser || 0,
+        c.totalXP || 15,
+        c.earnedXPByUser || 0
+      )
     );
   }
 }

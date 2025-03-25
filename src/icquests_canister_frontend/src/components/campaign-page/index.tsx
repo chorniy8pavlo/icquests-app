@@ -5,7 +5,8 @@ import { IQuest } from '@/types';
 import useSWR from 'swr';
 import QuestCard from '../quest-card';
 import CampaignBanner from '../campaign-banner';
-import { Spinner } from '@nextui-org/react';
+import Link from 'next/link';
+import Web3Loader from '../web3-loader';
 
 const CampaignPage = ({ id }: { id: string }) => {
   const { data: questsData, error: questsError } = useSWR<IQuest[]>(
@@ -16,34 +17,83 @@ const CampaignPage = ({ id }: { id: string }) => {
   if (questsError)
     return (
       <div className="h-screen flex items-center justify-center">
-        Error loading quests
+        <div className="bg-white/5 p-8 rounded-xl text-center">
+          <h2 className="text-xl font-bold mb-4">Error Loading Campaign</h2>
+          <p className="text-white/70 mb-6">
+            There was an error loading campaign details.
+          </p>
+          <Link
+            href="/all-quests"
+            className="inline-block bg-white/10 hover:bg-white/20 py-2 px-4 rounded text-white transition-colors"
+          >
+            Go to all quests
+          </Link>
+        </div>
       </div>
     );
 
   if (!questsData)
+    return <Web3Loader message="Loading campaign..." minDisplayTime={2500} />;
+
+  const campaign = questsData.length ? questsData[0].getCampaignUI() : null;
+
+  if (!campaign) {
     return (
-      <div className="h-screen flex items-center justify-center flex-col">
-        <span>Loading quests...</span>
-        <Spinner className="mt-5" />
+      <div className="h-screen flex items-center justify-center">
+        <div className="bg-white/5 p-8 rounded-xl text-center">
+          <h2 className="text-xl font-bold mb-4">Campaign Not Found</h2>
+          <p className="text-white/70 mb-6">
+            We couldn&apos;t find the campaign you&apos;re looking for.
+          </p>
+          <Link
+            href="/all-quests"
+            className="inline-block bg-white/10 hover:bg-white/20 py-2 px-4 rounded text-white transition-colors"
+          >
+            Go to all quests
+          </Link>
+        </div>
       </div>
     );
+  }
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-[1392px] mx-auto pt-10">
-        {questsData?.length && (
-          <CampaignBanner campaign={questsData[0].getCampaignUI()} />
+    <div className="min-h-screen py-8 bg-dark">
+      <div className="px-3 max-w-[1392px] mx-auto">
+        <div className="flex items-center mb-6">
+          <div className="text-white/60">
+            <Link href="/" className="hover:text-white transition-colors">
+              Home
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-white">{campaign.title}</span>
+          </div>
+        </div>
+
+        <CampaignBanner campaign={campaign} />
+
+        <h2 className="mt-8 mb-6 text-2xl font-semibold">Available Quests</h2>
+
+        {questsData.length === 0 ? (
+          <div className="bg-secondary p-8 rounded-xl text-center my-6">
+            <p className="text-xl text-white/70">
+              No quests available in this campaign yet.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-10">
+            {questsData.map((quest) => (
+              <div
+                key={quest.getUI().id}
+                className="transition-transform hover:scale-[1.02]"
+              >
+                <QuestCard quest={quest} />
+              </div>
+            ))}
+          </div>
         )}
-      </div>
-      <p className="px-3 max-w-[1392px] mx-auto mt-[35px] pb-5 text-2xl font-semibold">
-        Available quests
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-3 max-w-[1392px] mx-auto pb-10">
-        {questsData.map((quest) => (
-          <QuestCard key={quest.getUI().id} quest={quest} />
-        ))}
       </div>
     </div>
   );
 };
+
 export default CampaignPage;

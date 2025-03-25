@@ -7,7 +7,13 @@ export class Campaign implements ICampaign {
     private description: string,
     private background: string,
     private logo: string,
-    private partnerUrl: string
+    private partnerUrl: string,
+    private category: string,
+    private createdDate: string = 'today',
+    private totalQuests: number = 1,
+    private completedQuestsByUser: number = 0,
+    private totalXP: number = 15,
+    private earnedXPByUser: number = 0
   ) {}
 
   getUI() {
@@ -17,12 +23,13 @@ export class Campaign implements ICampaign {
       logo: this.logo,
       title: this.title,
       subtitle: this.description,
-      createdDate: 'today',
-      totalQuests: 1,
-      completedQuestsByUser: 0,
-      totalXP: 15,
-      earnedXPByUser: 0,
-      partnerUrl: this.partnerUrl
+      createdDate: this.createdDate,
+      totalQuests: this.totalQuests,
+      completedQuestsByUser: this.completedQuestsByUser,
+      totalXP: this.totalXP,
+      earnedXPByUser: this.earnedXPByUser,
+      partnerUrl: this.partnerUrl,
+      category: this.category
     };
   }
 }
