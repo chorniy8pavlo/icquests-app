@@ -494,15 +494,15 @@ module {
         try {
             let user = await externalCanister.user_balances(userPrincipal);
 
-            return false;
-            // switch (user) {
-            //     case (?u) {
-            //         return u.token_created.size() > 0;
-            //     };
-            //     case null {
-            //         return false;
-            //     };
-            // };
+            // Check if response is Ok (return true) or Err (return false)
+            switch (user) {
+                case (#Ok(_)) {
+                    return true;
+                };
+                case (#Err(_)) {
+                    return false;
+                };
+            };
         } catch (e) {
             Debug.print(Error.message(e));
             return false;

@@ -1,5 +1,6 @@
 import { Campaign } from '@/integration/entities/campaign';
 import { Identity } from '@dfinity/agent';
+import { VerificationResult } from '@/integration/entities/quest';
 
 export type QuestStatus = 'active' | 'completed' | 'inactive';
 export type CampaignStatus = 'active' | 'inactive';
@@ -41,7 +42,7 @@ export interface IUser {
 export interface IQuest {
   getUI(): IQuestUI;
   getCampaignUI(): ICampaignUI;
-  verifyCompletion(identity: Identity): Promise<boolean>;
+  verifyCompletion(identity: Identity): Promise<VerificationResult>;
 }
 
 export interface ICampaign {

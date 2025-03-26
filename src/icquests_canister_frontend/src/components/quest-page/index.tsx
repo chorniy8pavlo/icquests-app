@@ -71,13 +71,28 @@ export default function QuestDetailsClient({ id }: { id: string }) {
 
     setIsLoading(true);
     try {
-      const res = await quest.verifyCompletion(identity);
+      const result = await quest.verifyCompletion(identity);
 
-      if (res) {
-        toast.success('Quest completion verified successfully!');
-        revalidateCache(user?.principal.toString());
-      } else {
-        toast.error('Quest requirements have not been met. Please complete all tasks and try again.');
+      switch (result.status) {
+        case 'QUEST_COMPLETED':
+          toast.success(result.message);
+          revalidateCache(user?.principal.toString());
+          break;
+        case 'QUEST_ALREADY_COMPLETED':
+          toast.info(result.message);
+          // Refresh data to ensure UI reflects completed status
+          revalidateCache(user?.principal.toString());
+          break;
+        case 'QUEST_NOT_VERIFIED':
+          toast.error(result.message);
+          break;
+        case 'USER_NOT_FOUND':
+          toast.error(result.message);
+          break;
+        case 'ERROR':
+        default:
+          toast.error(result.message);
+          break;
       }
     } catch (error) {
       toast.error('An error occurred during verification');
