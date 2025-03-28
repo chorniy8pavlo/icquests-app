@@ -322,6 +322,8 @@ module {
      * ==========================================
      */
     public func verify(caller : Principal) : async Bool {
+        // this pending inside ICPTopup's repository
+        // Waiting for Jorgen to deploy
         // let externalCanister = actor ("24qkv-5aaaa-aaaal-amhkq-cai") : ICPTopupActor;
         // let userPrincipal = Principal.toText(caller);
 

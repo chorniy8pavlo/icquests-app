@@ -265,20 +265,6 @@ actor {
               case true {
                 switch (quests.get(questId)) {
                   case (?quest) {
-                    let updatedQuest = {
-                      id = quest.id;
-                      title = quest.title;
-                      subtitle = quest.subtitle;
-                      description = quest.description;
-                      rewardXp = quest.rewardXp;
-                      campaignId = quest.campaignId;
-                      tags = quest.tags;
-                      estimatedTime = quest.estimatedTime;
-                      difficulty = quest.difficulty;
-                      prerequisites = quest.prerequisites;
-                    };
-                    quests.put(questId, updatedQuest);
-
                     let updatedUser = {
                       principal = user.principal;
                       xpBalance = user.xpBalance + quest.rewardXp;
