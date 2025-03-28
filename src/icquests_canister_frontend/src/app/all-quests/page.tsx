@@ -6,6 +6,7 @@ import { IQuest } from '@/types';
 import useSWR from 'swr';
 import Link from 'next/link';
 import Web3Loader from '@/components/web3-loader';
+import Breadcrumbs from '@/components/breadcrumbs';
 
 export default function AllQuests() {
   const { data: questsData, error: questsError } = useSWR<IQuest[]>(
@@ -32,20 +33,17 @@ export default function AllQuests() {
     );
 
   if (!questsData)
-    return <Web3Loader message="Loading quests..." minDisplayTime={2500} />;
+    return <Web3Loader message="Loading quests..." />;
+
+  const breadcrumbPaths = [
+    { label: 'Home', href: '/' },
+    { label: 'All Quests' }
+  ];
 
   return (
     <div className="min-h-screen py-8 bg-dark">
       <div className="px-3 max-w-[1392px] mx-auto">
-        <div className="flex items-center mb-6">
-          <div className="text-white/60">
-            <Link href="/" className="hover:text-white transition-colors">
-              Home
-            </Link>
-            <span className="mx-2">/</span>
-            <span className="text-white">All Quests</span>
-          </div>
-        </div>
+        <Breadcrumbs paths={breadcrumbPaths} backUrl="/" backLabel="Back to home" />
 
         <h1 className="text-3xl font-bold mb-6">All Quests</h1>
 

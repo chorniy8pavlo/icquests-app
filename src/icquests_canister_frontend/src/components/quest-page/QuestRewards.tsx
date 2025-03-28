@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import { Spinner } from '@nextui-org/react';
 import PhotoXp from '@/assets/svgs/photo-xp.svg';
-import { Trophy, Clock, CheckCircle2 } from 'lucide-react';
+import { Trophy, Clock, CheckCircle2, ArrowRight, Shield } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 type QuestRewardsProps = {
   reward: number;
@@ -127,11 +128,21 @@ export const QuestRewards = ({
             >
               {isLoading ? (
                 <>
-                  <Spinner size="sm" color="white" />
-                  <span>Verifying...</span>
+                  <motion.div 
+                    className="flex items-center justify-center gap-2"
+                    animate={{ opacity: [0.7, 1, 0.7] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <Shield className="w-4 h-4" />
+                    <Spinner size="sm" color="white" />
+                    <span>Verifying Quest Completion...</span>
+                  </motion.div>
                 </>
               ) : (
-                <span>Verify & Claim XP</span>
+                <div className="flex items-center gap-1.5">
+                  <span>Verify & Claim XP</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </div>
               )}
             </button>
           )}
@@ -140,8 +151,41 @@ export const QuestRewards = ({
         {/* Status Message */}
         {!isCompleted && status !== 'inactive' && (
           <p className="text-white/40 text-center text-xs mt-3">
-            Complete this quest to earn {reward} XP
+            {isLoading 
+              ? "Connecting to the Internet Computer blockchain..."
+              : `Complete this quest to earn ${reward} XP`
+            }
           </p>
+        )}
+        
+        {/* Verification Progress Indicator */}
+        {isLoading && (
+          <div className="mt-4 pt-4 border-t border-white/5">
+            <div className="flex justify-between text-xs text-white/40 mb-2">
+              <span>Verification in progress</span>
+              <motion.span
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                Please wait...
+              </motion.span>
+            </div>
+            <motion.div 
+              className="h-1 bg-dark rounded-full overflow-hidden"
+            >
+              <motion.div 
+                className="h-full bg-primary"
+                initial={{ width: "0%" }}
+                animate={{ width: ["0%", "100%"] }}
+                transition={{ 
+                  duration: 2.5, 
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  ease: "easeInOut" 
+                }}
+              />
+            </motion.div>
+          </div>
         )}
       </div>
     </div>

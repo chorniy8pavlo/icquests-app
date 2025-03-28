@@ -1,10 +1,12 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import CampaignPage from '@/components/campaign-page';
+import { getActiveCampaigns } from '@/integration';
 import React from 'react';
 
 export async function generateStaticParams() {
-  return [{ id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }];
+  const campaigns = await getActiveCampaigns();
+  return campaigns.map((campaign) => ({
+    id: String(campaign.getUI().id),
+  }));
 }
 
 export default async function Campaigns({
@@ -20,3 +22,4 @@ export default async function Campaigns({
     </>
   );
 }
+

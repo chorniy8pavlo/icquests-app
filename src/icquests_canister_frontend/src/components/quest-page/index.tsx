@@ -8,9 +8,9 @@ import { useAuth, useIdentity } from '@nfid/identitykit/react';
 import { userConnector } from '@/integration/connectors/user';
 import { toast, Toaster } from 'sonner';
 import {
-  Breadcrumbs,
   QuestHeader,
   QuestDescription,
+  QuestRewards,
   RelatedQuests,
   NavigationLinks,
   QuestLoading,
@@ -18,8 +18,9 @@ import {
   QuestNotFound,
   QuestSkeleton,
   CampaignBanner,
-  QuestRewards,
 } from './components';
+import Breadcrumbs from '../breadcrumbs';
+import Web3Loader from '../web3-loader';
 
 // Utility function to handle cache invalidation with proper types
 const revalidateCache = (userId?: string) => {
@@ -31,6 +32,15 @@ const revalidateCache = (userId?: string) => {
 
 export default function QuestDetailsClient({ id }: { id: string }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState<{
+    show: boolean;
+    message: string;
+    stage: 'verifying' | 'success' | 'error' | 'info';
+  }>({
+    show: false,
+    message: 'Verifying quest completion...',
+    stage: 'verifying'
+  });
 
   // Fetch quests data
   const {
@@ -70,35 +80,90 @@ export default function QuestDetailsClient({ id }: { id: string }) {
     }
 
     setIsLoading(true);
+    setVerificationStatus({
+      show: true,
+      message: 'Verifying quest completion...',
+      stage: 'verifying'
+    });
+    
     try {
       const result = await quest.verifyCompletion(identity);
 
       switch (result.status) {
         case 'QUEST_COMPLETED':
-          toast.success(result.message);
-          revalidateCache(user?.principal.toString());
+          setVerificationStatus({
+            show: true,
+            message: 'Success! Quest completed and XP rewarded!',
+            stage: 'success'
+          });
+          setTimeout(() => {
+            setVerificationStatus(prev => ({ ...prev, show: false }));
+            toast.success(result.message);
+            revalidateCache(user?.principal.toString());
+          }, 2000);
           break;
         case 'QUEST_ALREADY_COMPLETED':
-          toast.info(result.message);
-          // Refresh data to ensure UI reflects completed status
-          revalidateCache(user?.principal.toString());
+          setVerificationStatus({
+            show: true,
+            message: 'You have already completed this quest.',
+            stage: 'info'
+          });
+          setTimeout(() => {
+            setVerificationStatus(prev => ({ ...prev, show: false }));
+            toast.info(result.message);
+            revalidateCache(user?.principal.toString());
+          }, 2000);
           break;
         case 'QUEST_NOT_VERIFIED':
-          toast.error(result.message);
+          setVerificationStatus({
+            show: true,
+            message: 'Quest requirements not met! Please complete all tasks.',
+            stage: 'error'
+          });
+          setTimeout(() => {
+            setVerificationStatus(prev => ({ ...prev, show: false }));
+            toast.error(result.message);
+          }, 2000);
           break;
         case 'USER_NOT_FOUND':
-          toast.error(result.message);
+          setVerificationStatus({
+            show: true,
+            message: 'User not found. Please ensure your wallet is connected.',
+            stage: 'error'
+          });
+          setTimeout(() => {
+            setVerificationStatus(prev => ({ ...prev, show: false }));
+            toast.error(result.message);
+          }, 2000);
           break;
         case 'ERROR':
         default:
-          toast.error(result.message);
+          setVerificationStatus({
+            show: true,
+            message: 'An error occurred during verification.',
+            stage: 'error'
+          });
+          setTimeout(() => {
+            setVerificationStatus(prev => ({ ...prev, show: false }));
+            toast.error(result.message);
+          }, 2000);
           break;
       }
     } catch (error) {
-      toast.error('An error occurred during verification');
+      setVerificationStatus({
+        show: true,
+        message: 'An error occurred during verification.',
+        stage: 'error'
+      });
+      setTimeout(() => {
+        setVerificationStatus(prev => ({ ...prev, show: false }));
+        toast.error('An error occurred during verification');
+      }, 2000);
       console.error('Verification error:', error);
     } finally {
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
     }
   };
 
@@ -128,7 +193,6 @@ export default function QuestDetailsClient({ id }: { id: string }) {
             <QuestHeader
               title={title}
               subtitle={subtitle}
-              dateCreated="Jul 15, 2023"
               estimatedTime={estimatedTime}
               categories={tags}
             />
@@ -163,6 +227,13 @@ export default function QuestDetailsClient({ id }: { id: string }) {
           campaignTitle={campaign.title}
         />
       </div>
+      
+      {/* Verification Modal */}
+      {verificationStatus.show && (
+        <Web3Loader 
+          message={verificationStatus.message} 
+        />
+      )}
     </div>
   );
 }

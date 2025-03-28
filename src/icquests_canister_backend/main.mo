@@ -12,9 +12,7 @@ import QuestNFIDVaults "./quest-nfidvaults";
 import QuestPacapump "./quest-pacapump";
 import QuestKongswap "./quest-kongswap";
 import QuestSonic "./quest-sonic";
-// You may need to import Quest001 and Quest002 if needed
-// import Quest001 "./quest001";
-// import Quest002 "./quest002";
+import QuestICPTopup "./quest-icptopup";
 
 actor {
   /**
@@ -241,7 +239,6 @@ actor {
             return "QUEST_ALREADY_COMPLETED";
           };
           case null {
-            // Select verification method based on quest ID
             let isVerified = switch (questId) {
               case (1) {
                 await QuestNFIDVaults.verify(userPrincipal);
@@ -256,11 +253,7 @@ actor {
                 await QuestSonic.verify(userPrincipal);
               };
               case (5) {
-                // If using Quest001 and Quest002 modules
-                // await Quest001.verify(userPrincipal)
-
-                // For now, let's default to false for the 5th quest until implemented
-                false;
+                await QuestICPTopup.verify(userPrincipal);
               };
               case (_) {
                 // For any other quest IDs, verification fails
@@ -270,14 +263,6 @@ actor {
 
             switch (isVerified) {
               case true {
-                let updatedUser = {
-                  principal = user.principal;
-                  xpBalance = user.xpBalance + 15;
-                  completedQuests = Array.append<Nat>(user.completedQuests, [questId]);
-                };
-                users.put(user.principal, updatedUser);
-
-                // Increment the participants count for the completed quest
                 switch (quests.get(questId)) {
                   case (?quest) {
                     let updatedQuest = {
@@ -293,6 +278,13 @@ actor {
                       prerequisites = quest.prerequisites;
                     };
                     quests.put(questId, updatedQuest);
+
+                    let updatedUser = {
+                      principal = user.principal;
+                      xpBalance = user.xpBalance + quest.rewardXp;
+                      completedQuests = Array.append<Nat>(user.completedQuests, [questId]);
+                    };
+                    users.put(user.principal, updatedUser);
                   };
                   case null {
                     // Quest not found, no action needed

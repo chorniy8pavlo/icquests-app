@@ -1,33 +1,20 @@
 'use client';
 
-import { useEffect } from 'react';
+
 import { motion } from 'framer-motion';
 
 type Web3LoaderProps = {
   message?: string;
-  minDisplayTime?: number;
 };
 
 const Web3Loader = ({ 
   message = 'Loading...', 
-  minDisplayTime = 2500 
 }: Web3LoaderProps) => {
-  
-  // Ensure loader stays visible for minimum display time
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // Minimum time has passed
-    }, minDisplayTime);
-    
-    return () => clearTimeout(timer);
-  }, [minDisplayTime]);
   
   return (
     <div className="fixed inset-0 bg-[#121212] flex flex-col items-center justify-center z-50">
       <div className="relative">
-        {/* Logo Animation Container */}
         <div className="mb-12 relative flex justify-center">
-          {/* Main Logo Animation */}
           <motion.div
             animate={{ 
               rotate: [0, 360]

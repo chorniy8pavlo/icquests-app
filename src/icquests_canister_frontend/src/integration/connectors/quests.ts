@@ -6,7 +6,7 @@ import { Quest } from '../entities/quest';
 import { campaignConnector } from './campaigns';
 
 export class QuestsConnector {
-  async getQuests(): Promise<Quest[]> {
+  async getQuests(withCampaign = true): Promise<Quest[]> {
     const actor = await getActor(
       'lyo6x-saaaa-aaaao-qjwlq-cai',
       new AnonymousIdentity(),
@@ -14,12 +14,12 @@ export class QuestsConnector {
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = (await actor.getAllQuests()) as any[];
-console.log({result})
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const campaigns = await campaignConnector.getCampaigns();
+    const campaigns = withCampaign ? await campaignConnector.getCampaigns() : [];
 
     return result?.map((c) => {
-      const questCampaign = campaigns.find((camp) => camp.id === c.campaignId);
+      const questCampaign = campaigns.find((camp) => String(camp.id) === String(c.campaignId));
 
       return new Quest(
         c.id,
@@ -33,7 +33,9 @@ console.log({result})
         c.tags,
         c.estimatedTime,
         c.participantsCount,
+        c.campaignId,
         questCampaign,
+        
       );
     });
   }

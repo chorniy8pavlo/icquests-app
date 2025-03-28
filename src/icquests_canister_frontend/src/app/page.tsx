@@ -6,9 +6,11 @@ import { ICampaign } from '@/types';
 import Link from 'next/link';
 import useSWR from 'swr';
 import Web3Loader from '@/components/web3-loader';
+import { useAuth } from '@nfid/identitykit/react';
 
 export default function Home() {
-  const { data, error } = useSWR<ICampaign[]>('campaigns', getActiveCampaigns);
+  const {user} = useAuth()
+  const { data, error } = useSWR<ICampaign[]>(['campaigns', user], () => getActiveCampaigns(user));
 
   if (error)
     return (
@@ -23,7 +25,7 @@ export default function Home() {
     );
 
   if (!data)
-    return <Web3Loader message="Loading campaigns..." minDisplayTime={2500} />;
+    return <Web3Loader message="Loading campaigns..." />;
 
   return (
     <div className="min-h-screen py-8 bg-dark">

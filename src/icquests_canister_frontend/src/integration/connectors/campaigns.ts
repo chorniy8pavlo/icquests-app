@@ -2,33 +2,35 @@ import { getActor } from '@/utils/ic';
 import { AnonymousIdentity } from '@dfinity/agent';
 import { idlFactory } from '../idl';
 import { Campaign } from '../entities/campaign';
+import { questConnector } from './quests';
+import { RawCampaign } from '@/types';
+import { userConnector } from './user';
 
 export class CampaignConnector {
-  async getCampaigns(): Promise<Campaign[]> {
+  async getCampaigns(userPrincipal?: string): Promise<Campaign[]> {
     const actor = await getActor(
       'lyo6x-saaaa-aaaao-qjwlq-cai',
       new AnonymousIdentity(),
       idlFactory
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = (await actor.getAllCampaigns()) as any[];
-    console.log({ result });
+
+    const result = (await actor.getAllCampaigns()) as RawCampaign[];
+    const allQuests = await questConnector.getQuests(false)
+    const user = userPrincipal ? await userConnector.getUser(userPrincipal) : undefined;
+
 
     return result?.map(
       (c) => new Campaign(
-        c.id, 
+        String(c.id), 
         c.title, 
         c.description, 
         c.image, 
         c.logo, 
         c.partnerUrl,
         c.category || 'General', // Default category if not provided
-        c.createdDate || 'today',
-        c.totalQuests || 1,
-        c.completedQuestsByUser || 0,
-        c.totalXP || 15,
-        c.earnedXPByUser || 0
+        allQuests.filter((q) => String(q.getCampaignId()) === String(c.id)),
+        user
       )
     );
   }

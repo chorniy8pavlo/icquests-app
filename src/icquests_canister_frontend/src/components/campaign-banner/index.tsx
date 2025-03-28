@@ -43,10 +43,6 @@ export default function CampaignBanner({
       ? Math.round((completedQuestsByUser / totalQuests) * 100)
       : 0;
 
-  // Calculate XP percentage
-  const xpPercentage =
-    totalXP > 0 ? Math.round((earnedXPByUser / totalXP) * 100) : 0;
-
   return (
     <div
       className={`relative overflow-hidden rounded-xl bg-cover bg-center group ${className}`}
@@ -134,7 +130,7 @@ export default function CampaignBanner({
                 color="primary"
                 showValueLabel={true}
                 classNames={{
-                  track: 'bg-white/10',
+                  track: 'bg-white/10 rounded-xl',
                   value: 'text-xs font-medium',
                 }}
                 label={`${completedQuestsByUser}/${totalQuests} quests`}
@@ -160,11 +156,11 @@ export default function CampaignBanner({
               <Progress
                 size="md"
                 radius="sm"
-                value={xpPercentage}
-                color="warning"
+                value={completionPercentage}
+                color="primary"
                 showValueLabel={true}
                 classNames={{
-                  track: 'bg-white/10',
+                  track: 'bg-white/10 rounded-xl',
                   value: 'text-xs font-medium',
                 }}
                 label={`${earnedXPByUser}/${totalXP} XP`}

@@ -3,8 +3,6 @@ import { Clock, Tag } from 'lucide-react';
 type QuestHeaderProps = {
   title: string;
   subtitle: string;
-  // Add optional metadata for enhanced display
-  dateCreated?: string;
   estimatedTime?: string;
   categories?: string[];
 };

@@ -40,7 +40,7 @@ export default function LeaderBoardTable() {
   }
 
   if (isLoading || !data) {
-    return <Web3Loader message="Loading leaderboard..." minDisplayTime={2500} />;
+    return <Web3Loader message="Loading leaderboard..." />;
   }
 
   return (

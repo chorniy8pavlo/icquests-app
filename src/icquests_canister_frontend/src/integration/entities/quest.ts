@@ -23,6 +23,7 @@ export class Quest implements IQuest {
     private tags: string[],
     private estimatedTime: string,
     private participantsCount: number,
+    private campaignId: string,
     private campaign?: Campaign,
   ) {}
 
@@ -48,6 +49,10 @@ export class Quest implements IQuest {
     return this.campaign.getUI();
   }
 
+  getCampaignId(): string {
+    return this.campaignId;
+  }
+
   async verifyCompletion(identity: DelegationIdentity): Promise<VerificationResult> {
     try {
       const actor = await getActor(
@@ -57,7 +62,6 @@ export class Quest implements IQuest {
       );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = (await actor.verify(Number(this.id))) as string;
-      console.log('verify', { result });
       
       // Handle different response statuses
       switch (result) {

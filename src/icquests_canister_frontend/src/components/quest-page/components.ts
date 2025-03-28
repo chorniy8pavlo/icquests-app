@@ -1,4 +1,3 @@
-export { Breadcrumbs } from './Breadcrumbs';
 export { QuestHeader } from './QuestHeader';
 export { QuestDescription } from './QuestDescription';
 export { RelatedQuests } from './RelatedQuests';

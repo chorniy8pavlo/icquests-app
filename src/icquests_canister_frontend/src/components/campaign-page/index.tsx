@@ -1,20 +1,25 @@
 'use client';
 
-import { getQuests } from '@/integration';
-import { IQuest } from '@/types';
+import { getActiveCampaigns, getQuests } from '@/integration';
+import { ICampaign, IQuest } from '@/types';
 import useSWR from 'swr';
 import QuestCard from '../quest-card';
 import CampaignBanner from '../campaign-banner';
 import Link from 'next/link';
 import Web3Loader from '../web3-loader';
+import Breadcrumbs from '../breadcrumbs';
+import { useAuth } from '@nfid/identitykit/react';
 
 const CampaignPage = ({ id }: { id: string }) => {
+  const { user } = useAuth();
   const { data: questsData, error: questsError } = useSWR<IQuest[]>(
     [id, 'quests'],
     ([id]) => getQuests(String(id))
   );
+  const { data, error, isLoading: isLoadingCampaign } = useSWR<ICampaign[]>(['campaigns', user], () => getActiveCampaigns(user));
 
-  if (questsError)
+  
+  if (questsError || error)
     return (
       <div className="h-screen flex items-center justify-center">
         <div className="bg-white/5 p-8 rounded-xl text-center">
@@ -32,10 +37,10 @@ const CampaignPage = ({ id }: { id: string }) => {
       </div>
     );
 
-  if (!questsData)
-    return <Web3Loader message="Loading campaign..." minDisplayTime={2500} />;
+  if (isLoadingCampaign || !questsData)
+    return <Web3Loader message="Loading campaign..." />;
 
-  const campaign = questsData.length ? questsData[0].getCampaignUI() : null;
+  const campaign = data?.find((item) => String(item.getUI().id) === id)?.getUI();
 
   if (!campaign) {
     return (
@@ -59,15 +64,15 @@ const CampaignPage = ({ id }: { id: string }) => {
   return (
     <div className="min-h-screen py-8 bg-dark">
       <div className="px-3 max-w-[1392px] mx-auto">
-        <div className="flex items-center mb-6">
-          <div className="text-white/60">
-            <Link href="/" className="hover:text-white transition-colors">
-              Home
-            </Link>
-            <span className="mx-2">/</span>
-            <span className="text-white">{campaign.title}</span>
-          </div>
-        </div>
+        <Breadcrumbs 
+          paths={[
+            { label: 'Home', href: '/' },
+            { label: 'All Quests', href: '/all-quests' },
+            { label: campaign.title }
+          ]} 
+          backUrl="/all-quests" 
+          backLabel="Back to all quests" 
+        />
 
         <CampaignBanner campaign={campaign} />
 

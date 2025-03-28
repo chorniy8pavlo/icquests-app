@@ -48,3 +48,15 @@ export interface IQuest {
 export interface ICampaign {
   getUI(): ICampaignUI;
 }
+
+
+export interface RawCampaign {
+  id: number;
+  title : string;
+  image : string;
+  description : string;
+  logo : string;
+  isActive : boolean;
+  partnerUrl : string;
+  category : string;
+}

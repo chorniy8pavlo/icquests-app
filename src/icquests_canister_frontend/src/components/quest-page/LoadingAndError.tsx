@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Web3Loader from '../web3-loader';
 
 export const QuestLoading = () => {
-  return <Web3Loader message="Loading quest details..." minDisplayTime={2500} />;
+  return <Web3Loader message="Loading quest details..."  />;
 };
 
 export const QuestError = () => {
