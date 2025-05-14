@@ -305,6 +305,7 @@ module {
         getTopupTakeRate : shared query () -> async Float;
         getTotalCyclesToppedUpForCaller : shared query () -> async Nat;
         getUsersThatHaveToppedUpCanister : shared query Principal -> async GetUsersThatHaveToppedUpCanisterResponse;
+        hasUserToppedUpAnyCanister : shared query Principal -> async Bool;
         icrc10_supported_standards : shared query () -> async ICRC10SupportedStandards;
         icrc28_trusted_origins : shared () -> async { trusted_origins : [Text] };
         setTopupTakeRate : shared Float -> async ();
@@ -316,20 +317,18 @@ module {
         v0_getLatestRequestStateById : shared query Nat -> async V0GetLatestRequestStateById;
         v0_getRequestStateHistoryById : shared query Nat -> async V0GetRequestStateHistoryByIdResponse;
     };
+
     /**
      * ==========================================
      *        Quest Verification Function
      * ==========================================
      */
     public func verify(caller : Principal) : async Bool {
-        // this pending inside ICPTopup's repository
-        // Waiting for Jorgen to deploy
-        // let externalCanister = actor ("24qkv-5aaaa-aaaal-amhkq-cai") : ICPTopupActor;
-        // let userPrincipal = Principal.toText(caller);
+        let externalCanister = actor ("24qkv-5aaaa-aaaal-amhkq-cai") : ICPTopupActor;
 
         try {
-            // let user = await externalCanister.hasUserToppedUpAnyCanister(userPrincipal);
-            return false;
+            let boolean = await externalCanister.hasUserToppedUpAnyCanister(caller);
+            return boolean;
         } catch (e) {
             Debug.print(Error.message(e));
             return false;

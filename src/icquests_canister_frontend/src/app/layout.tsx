@@ -3,6 +3,7 @@ import {Inter} from "next/font/google";
 import "./globals.css";
 import Provider from "./provider";
 import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -20,11 +21,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} antialiased font-sans`}
+        className={`${inter.className} antialiased font-sans relative`}
       >
         <Provider>
            <Navbar />
           {children}
+          <Footer />
         </Provider>
       </body>
     </html>

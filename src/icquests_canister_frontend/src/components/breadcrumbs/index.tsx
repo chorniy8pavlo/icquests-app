@@ -35,7 +35,7 @@ export const Breadcrumbs = ({ paths, backUrl, backLabel = 'Back' }: BreadcrumbsP
       {backUrl && (
         <Link
           href={backUrl}
-          className="flex items-center gap-1.5 text-white/60 hover:text-primary text-xs transition-colors"
+          className="hidden items-center gap-1.5 text-white/60 hover:text-primary text-xs transition-colors"
         >
           <ArrowLeft size={12} />
           <span>{backLabel}</span>

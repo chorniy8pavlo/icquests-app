@@ -26,7 +26,7 @@ export default function Navbar() {
   );
 
   return (
-    <div className="bg-secondary text-white">
+    <div className="bg-secondary text-white sticky top-0 z-50">
       <div className="flex items-center justify-between font-sans leading-[21px] py-[14px] px-3 max-w-[1392px] mx-auto">
         <div className="flex items-center gap-[19px] font-medium">
           <Link href="/">
@@ -63,6 +63,16 @@ export default function Navbar() {
               }`}
             >
               Leaderboard
+            </Link>
+            <Link
+              href="/landing"
+              className={`${
+                currentPath === '/landing'
+                  ? 'text-primary'
+                  : 'hover:underline'
+              }`}
+            >
+              Landing Page
             </Link>
           </div>
         </div>
@@ -111,6 +121,16 @@ export default function Navbar() {
             }`}
           >
             Leaderboard
+          </Link>
+          <Link
+            href="/landing"
+            className={`${
+              currentPath === '/landing'
+                ? 'text-primary'
+                : 'hover:underline'
+            }`}
+          >
+            Landing Page
           </Link>
           <ConnectWalletButton />
         </div>
