@@ -6,7 +6,9 @@ import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
 import Array "mo:base/Array";
 import Bool "mo:base/Bool";
+import Float "mo:base/Float";
 import Utils "utils";
+import Error "mo:base/Error";
 
 import QuestNFIDVaults "./quest-nfidvaults";
 import QuestPacapump "./quest-pacapump";
@@ -58,15 +60,18 @@ actor {
   stable var campaignsStore : [(Nat, Campaign)] = [];
   stable var questsStore : [(Nat, Quest)] = [];
   stable var usersStore : [(Text, UserData)] = [];
+  stable var adminsStore : [Text] = [];
 
   var campaigns : TrieMap.TrieMap<Nat, Campaign> = TrieMap.TrieMap<Nat, Campaign>(Nat.equal, Hash.hash);
   var quests : TrieMap.TrieMap<Nat, Quest> = TrieMap.TrieMap<Nat, Quest>(Nat.equal, Hash.hash);
   var users : TrieMap.TrieMap<Text, UserData> = TrieMap.TrieMap<Text, UserData>(Text.equal, Text.hash);
+  var admins : [Text] = [];
 
   system func preupgrade() {
     campaignsStore := Iter.toArray(campaigns.entries());
     questsStore := Iter.toArray(quests.entries());
     usersStore := Iter.toArray(users.entries());
+    adminsStore := admins;
   };
 
   system func postupgrade() {
@@ -85,6 +90,67 @@ actor {
       users.put(entry.0, entry.1);
     };
 
+    admins := adminsStore;
+  };
+
+  /**
+   * ==========================================
+   *               Admin Section
+   * ==========================================
+   */
+
+  // Check if a principal is an admin
+  private func isAdmin(caller : Principal) : Bool {
+    let callerText = Principal.toText(caller);
+    return Array.find<Text>(admins, func x = x == callerText) != null;
+  };
+
+  // Initialize the first admin - only callable during deployment
+  public shared (msg) func initializeAdmin() : async Text {
+    if (admins.size() > 0) {
+      return "Admin already initialized";
+    };
+
+    admins := Array.append<Text>(admins, [Principal.toText(msg.caller)]);
+    return "Admin initialized successfully";
+  };
+
+  // Add a new admin - only callable by existing admins
+  public shared (msg) func addAdmin(newAdmin : Text) : async Text {
+    if (not isAdmin(msg.caller)) {
+      throw Error.reject("Unauthorized: Only admins can add new admins");
+    };
+
+    if (Array.find<Text>(admins, func x = x == newAdmin) != null) {
+      return "Principal is already an admin";
+    };
+
+    admins := Array.append<Text>(admins, [newAdmin]);
+    return "Admin added successfully";
+  };
+
+  // Remove an admin - only callable by existing admins
+  public shared (msg) func removeAdmin(adminToRemove : Text) : async Text {
+    if (not isAdmin(msg.caller)) {
+      throw Error.reject("Unauthorized: Only admins can remove admins");
+    };
+
+    // Cannot remove the last admin
+    if (admins.size() <= 1) {
+      return "Cannot remove the last admin";
+    };
+
+    admins := Array.filter<Text>(admins, func x = x != adminToRemove);
+    return "Admin removed successfully";
+  };
+
+  // Get all admins - only callable by existing admins
+  public shared (msg) func getAllAdmins() : async [Text] {
+    if (not isAdmin(msg.caller)) {
+      throw Error.reject("Unauthorized: Only admins can view all admins");
+    };
+
+    return admins;
   };
 
   /**
@@ -100,7 +166,11 @@ actor {
     return campaigns.get(id);
   };
 
-  public func addCampaign(campaign : Campaign) : async Text {
+  public shared (msg) func addCampaign(campaign : Campaign) : async Text {
+    if (not isAdmin(msg.caller)) {
+      throw Error.reject("Unauthorized: Only admins can add campaigns");
+    };
+
     if (campaigns.get(campaign.id) != null) {
       return "Campaign with this ID already exists.";
     };
@@ -108,7 +178,11 @@ actor {
     return "Campaign added successfully.";
   };
 
-  public func updateCampaign(campaign : Campaign) : async Text {
+  public shared (msg) func updateCampaign(campaign : Campaign) : async Text {
+    if (not isAdmin(msg.caller)) {
+      throw Error.reject("Unauthorized: Only admins can update campaigns");
+    };
+
     if (campaigns.get(campaign.id) == null) {
       return "Campaign not found.";
     };
@@ -116,7 +190,11 @@ actor {
     return "Campaign updated successfully.";
   };
 
-  public func deleteCampaign(id : Nat) : async Text {
+  public shared (msg) func deleteCampaign(id : Nat) : async Text {
+    if (not isAdmin(msg.caller)) {
+      throw Error.reject("Unauthorized: Only admins can delete campaigns");
+    };
+
     if (campaigns.get(id) == null) {
       return "Campaign not found.";
     };
@@ -137,7 +215,11 @@ actor {
     return quests.get(id);
   };
 
-  public func addQuest(quest : Quest) : async Text {
+  public shared (msg) func addQuest(quest : Quest) : async Text {
+    if (not isAdmin(msg.caller)) {
+      throw Error.reject("Unauthorized: Only admins can add quests");
+    };
+
     if (quests.get(quest.id) != null) {
       return "Quest with this ID already exists.";
     };
@@ -159,7 +241,11 @@ actor {
     return "Quest added successfully.";
   };
 
-  public func updateQuest(quest : Quest) : async Text {
+  public shared (msg) func updateQuest(quest : Quest) : async Text {
+    if (not isAdmin(msg.caller)) {
+      throw Error.reject("Unauthorized: Only admins can update quests");
+    };
+
     if (quests.get(quest.id) == null) {
       return "Quest not found.";
     };
@@ -167,7 +253,11 @@ actor {
     return "Quest updated successfully.";
   };
 
-  public func deleteQuest(id : Nat) : async Text {
+  public shared (msg) func deleteQuest(id : Nat) : async Text {
+    if (not isAdmin(msg.caller)) {
+      throw Error.reject("Unauthorized: Only admins can delete quests");
+    };
+
     if (quests.get(id) == null) {
       return "Quest not found.";
     };
@@ -302,5 +392,54 @@ actor {
 
   public func icrc28_trusted_origins() : async Utils.Icrc28TrustedOriginsResponse {
     return Utils.icrc28_trusted_origins();
+  };
+
+  // Fetches the XP rate (XP per completed quest) for a given user
+  public func fetchXPRate(principal : Text) : async Nat {
+    let userOption = users.get(principal);
+
+    switch (userOption) {
+      case (?user) {
+        if (Array.size(user.completedQuests) == 0) {
+          return 0;
+        };
+
+        // Calculate average XP per completed quest
+        return user.xpBalance / Array.size(user.completedQuests);
+      };
+      case null {
+        return 0;
+      };
+    };
+  };
+
+  // Gets the user's position on the leaderboard (sorted by XP balance)
+  public func fetchLeaderboardPosition(principal : Text) : async ?Nat {
+    let allUsers = Iter.toArray(users.vals());
+
+    // Sort users by XP balance in descending order
+    let sortedUsers = Array.sort<UserData>(
+      allUsers,
+      func(a, b) {
+        if (a.xpBalance > b.xpBalance) {
+          return #less;
+        } else if (a.xpBalance < b.xpBalance) {
+          return #greater;
+        } else {
+          return #equal;
+        };
+      },
+    );
+
+    // Find the position of the specified user
+    var position : Nat = 0;
+    for (user in sortedUsers.vals()) {
+      position += 1;
+      if (user.principal == principal) {
+        return ?position;
+      };
+    };
+
+    return null; // User not found
   };
 };

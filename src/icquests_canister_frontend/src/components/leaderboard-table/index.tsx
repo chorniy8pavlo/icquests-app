@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import { User, CheckCircle, ArrowUp, ArrowDown } from 'lucide-react';
+import { User, CheckCircle, ArrowUp, ArrowDown, Copy, Check } from 'lucide-react';
 import PhotoXP from '../../assets/svgs/photo-xp.svg';
 import CupGold from '../../assets/svgs/cup-gold.svg';
 import CupBronze from '../../assets/svgs/cup-bronze.svg';
@@ -28,6 +28,7 @@ const getCupImage = (rank: number) => {
 export default function LeaderBoardTable() {
   const [sortBy, setSortBy] = useState<'rank' | 'quests' | 'xp'>('xp');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [copiedPrincipal, setCopiedPrincipal] = useState<string | null>(null);
   
   const { data, error, isLoading } = useSWR('allUsers', () =>
     userConnector.getAllUsers()
@@ -40,6 +41,13 @@ export default function LeaderBoardTable() {
       setSortBy(column);
       setSortDirection('desc');
     }
+  };
+
+  const copyToClipboard = (principal: string) => {
+    navigator.clipboard.writeText(principal).then(() => {
+      setCopiedPrincipal(principal);
+      setTimeout(() => setCopiedPrincipal(null), 2000);
+    });
   };
 
   const sortedData = data ? [...data].sort((a, b) => {
@@ -132,6 +140,7 @@ export default function LeaderBoardTable() {
             {sortedData.map(({ principal, completedQuests, xpBalance }, index) => {
               const cup = getCupImage(index + 1);
               const isTopThree = index < 3;
+              const isCopied = copiedPrincipal === principal;
               
               return (
                 <motion.div
@@ -168,9 +177,22 @@ export default function LeaderBoardTable() {
                       <div className="w-9 h-9 rounded-full bg-primary/10 border border-white/10 flex items-center justify-center">
                         <User size={16} className="text-white/70" />
                       </div>
-                      <p className="font-medium truncate max-w-[180px] text-sm md:text-base">
-                        {principal}
-                      </p>
+                      <div className="flex items-center">
+                        <p className="font-medium truncate max-w-[180px] text-sm md:text-base">
+                          {principal}
+                        </p>
+                        <button 
+                          onClick={() => copyToClipboard(principal)}
+                          className="ml-2 p-1 cursor-pointer z-20 rounded-full hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Copy principal"
+                        >
+                          {isCopied ? (
+                            <Check size={14} className="text-green-400" />
+                          ) : (
+                            <Copy size={14} className="text-white/70" />
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </div>
 
