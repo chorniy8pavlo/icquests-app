@@ -32,11 +32,11 @@ A canister for tracking user quests and achievements on the Internet Computer.
 
 ## Quests Available
 
-1. **NFID Vaults Quest** - Verifies if a user has created a NFID Vaults
+1. **NFID Vaults Quest** - Verifies if a user has created a NFID Vault
 2. **Kongswap Quest** - Verifies if a user has made a swap on Kongswap
 3. **Pacapump Quest** - Verifies if a user has minted a token on Pacapump
 4. **Sonic Quest** - Verifies if a user has made a transaction on Sonic
-5. **Odin Quest** - Verifies if a user has created any tokens on the Odin platform
+5. **ICPTopup Quest** - Verifies if a user has topped up any canister on icptopup.com
 
 ## How to Use
 
